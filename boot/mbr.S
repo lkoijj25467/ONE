@@ -1,5 +1,6 @@
 %include "boot.inc"
 SECTION MBR vstart=0x7c00
+
     mov ax, cs
     mov ds, ax
     mov fs, ax
@@ -31,7 +32,7 @@ SECTION MBR vstart=0x7c00
     ;rd_disk_m_16三个参数分别为eax: 扇区号   bx: 物理地址    cx：一次操作的扇区数
     mov eax, LOADER_START_SECTOR                ;eax存放了扇区号
     mov bx, LOADER_BASE_ADDR                
-    mov cx, 1                                   
+    mov cx, 4                           
     call rd_disk_m_16                           ;读取磁盘信息写道LOADER_BASE_ADDR的物理地址上，并跳转
     jmp LOADER_BASE_ADDR
 
@@ -68,10 +69,10 @@ rd_disk_m_16:                                   ;rd_disk_m_16三个参数分别�
     .not_ready:
         nop
         in al, dx                               ;此时dx = 0x1f7 标志
-        and al, 0x88                            ;0x88 bin> 1000 1000    如果标志的第7位和第3位都为0，则继续；否则，跳转回去
+        and al, 0x80                            ;0x88 bin> 1000 1000    如果标志的第7位和第3位都为0，则继续；否则，跳转回去
         jnz .not_ready
 
-        mov ax, di                              ;di = 0x01
+        mov ax, di                              ;di = 0x04
         mov dx, 256                             
         mul dx                                  ;eax = eax*dx   ax = ax*dx = 1*256 = 156
         mov cx, ax                              ;ax = di = 0x01     cx = 256
